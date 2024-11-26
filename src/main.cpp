@@ -10,6 +10,7 @@
 1.) Whenever a new micro game is completed it will need to be
 added to the switch statement just like shake_it() and 
 simon_says().
+
 2.) The int num_games needs to equal the number of games in the 
 switch statement. If num games isn't high enough some of the
 games won't get played at all. if num_games is too small
@@ -17,24 +18,39 @@ then the default: case will trigger more often the higher
 num_games is, resulting in one game being played over and over.
 3.) The comments I wrote should be quite helpful. You should
 probably read over them.
+
 4.) You can do as many or as few games as you want, and they
 can be as simple or complex as you want them to be. I think they
 are fun to make, so as long as you are enjoying yourself feel
 free to keep going.
+
 5.) I've been adding a check for the second switch any time
 I make sound. You can see an example in either success(), or
 game_over(). That way you can mute the board if you flick off
 the second switch. I'm happy to change that behavoir if you
 want to use the switch for a game. Just let me know.
+
+6.) You can colapse functions (in case you didn't already
+know) which will make everything look a little cleaner.
+It's the drop down arrow all the way to the left, past the
+line number next to any set of brackets.
+
+7.) Feel free to ask if you have any questions or need a pointer.
+I'm always happy to help out.
 */
 
+
+//these give you the display height and width, which can be very useful for rendering things on the screen.
 static int display_height = 63;
 static int display_width = 127;
 
+//change this to the number of games currently added
 int num_games = 2;
 
+//this is the score of the person playing the game.
 int score = 0;
 
+//used later to check if the player won their micro game.
 bool game_won = true;
 
 
@@ -103,7 +119,7 @@ void success(){
 
   }
   
-  delay(40);
+  delay(200);
 
   Yboard.set_all_leds_color(0, 0, 0);
 
@@ -212,7 +228,7 @@ bool shake_it(){
 
     //draws the text for "Shake it!" on the screen.
     //set cursor sets the next text drawing location
-    display.setCursor(0,20);
+    display.setCursor(0,10);
     //set text size sets the font size
     display.setTextSize(3);
     //and print draws the text at the cursor location
@@ -262,9 +278,16 @@ bool simon_says(){
   //sets the length of to either 15 or the square root of the score plus 2, whichever is shorter
   int length = min(static_cast<int>(sqrt(score/1.5)) + 3, 15);
 
-  bool no_button = true;
+  //draws the title on the screen
+  display.clearDisplay();
+  display.setCursor(0,10);
+  display.setTextSize(3);
+  display.print("Simon");
+  display.setCursor(0, 40);
+  display.print("Says!");
+  display.display();
 
-  
+  //resets all the leds to black
   Yboard.set_all_leds_color(0, 0, 0);
 
   //this will loop 15 times if length is 15 or 5 times if length is 5
@@ -351,6 +374,9 @@ bool simon_says(){
     }
 
   }
+
+  //resets leds again.
+  Yboard.set_all_leds_color(0, 0, 0);
 
   //if they made it to the end it was a success.
   return true;
