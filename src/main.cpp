@@ -45,7 +45,7 @@ static int display_height = 63;
 static int display_width = 127;
 
 //change this to the number of games currently added
-int num_games = 2;
+int num_games = 3;
 
 //this is the score of the person playing the game.
 int score = 0;
@@ -104,10 +104,10 @@ void success(){
   score++;
 
   display.clearDisplay();
-  display.setCursor(0, 15);
+  display.setCursor(0, 10);
   display.print("Great");
 
-  display.setCursor(0, 30);
+  display.setCursor(0, 35);
   display.print("Job!");
   display.display();
 
@@ -272,11 +272,11 @@ bool shake_it(){
 
 //this is simon says. Press the left and right buttons in the right order to 
 bool simon_says(){
-  //creates a blank boolean array with 20 entries to store the directions the user needs to input
-  bool dir[20];
+  //creates a blank boolean array with 10 entries to store the directions the user needs to input
+  bool dir[10];
 
-  //sets the length of to either 15 or the square root of the score plus 2, whichever is shorter
-  int length = min(static_cast<int>(sqrt(score/1.5)) + 3, 15);
+  //sets the length of to either 10 or the square root of the score plus 2, whichever is shorter
+  int length = min(static_cast<int>(sqrt(score/2)) + 3, 10);
 
   //draws the title on the screen
   display.clearDisplay();
@@ -384,6 +384,74 @@ bool simon_says(){
 }
 
 
+//this game requires you to his a button at the right time.
+bool time_it(){
+
+  //this prevents the game starting while a button is pressed so you can't lose from holding a button from a previous game
+  while(Yboard.get_button(0) || Yboard.get_button(1)){
+
+    delay(10);
+
+  }
+
+  //the ammount of time to delay before changing the light.
+  int d = static_cast<int>(get_time(0.15));
+
+  //draws the title on the screen
+  display.clearDisplay();
+  display.setCursor(0,10);
+  display.setTextSize(3);
+  display.print("Time");
+  display.setCursor(0, 40);
+  display.print("it!");
+  display.display();
+  
+  //keeps track of which light is currently on
+  int light = 0;
+
+  //resets the leds
+  Yboard.set_all_leds_color(0, 0, 0);
+
+  //loops until the game ends
+  while(true){
+
+    //sets the bottom light green
+    Yboard.set_led_color(7, 0, 255, 0);
+
+    //sets the bottom light white.
+    Yboard.set_led_color(light, 255, 255, 255);
+
+    //if either button is pressed
+    if(Yboard.get_button(1) || Yboard.get_button(2)){
+      
+      //check if the current light is within one light of the bottom one
+      if(light >= 6 && light <= 8){
+
+        return true;  //you win if it is
+
+      }else{
+
+        return false; //you lose if it isn't
+
+      }
+
+    }
+
+    delay(d);
+
+    //turn off the light
+    Yboard.set_led_color(light % 20, 0, 0, 0);
+
+    //move to the next light
+    light++;
+
+    //thsis does the same thing as if light is greater than 20 then subtract 20 in a loop, but far more efficiently
+    light = light % 20;
+
+  }
+
+}
+
 //this is the main game loop that handles everything outside a micro game.
 void loop() {
   
@@ -404,16 +472,16 @@ void loop() {
       break;
 
     case 1:
-
       game_won = simon_says();
+      break;
 
+    case 2:
+      game_won = time_it();
       break;
 
     //this is run if none of the other cases match
     default:
-
       game_won = shake_it();
-
       break;
 
   }
