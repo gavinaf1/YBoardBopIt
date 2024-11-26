@@ -16,6 +16,7 @@ switch statement. If num games isn't high enough some of the
 games won't get played at all. if num_games is too small
 then the default: case will trigger more often the higher 
 num_games is, resulting in one game being played over and over.
+
 3.) The comments I wrote should be quite helpful. You should
 probably read over them.
 
@@ -35,7 +36,16 @@ know) which will make everything look a little cleaner.
 It's the drop down arrow all the way to the left, past the
 line number next to any set of brackets.
 
-7.) Feel free to ask if you have any questions or need a pointer.
+7.) You can update the Readme if you want. You can put
+whatever you want in there. I just put that we worked
+on it, but I don't know your last name. Feel free to add
+it or remove it altogether.
+
+8.) Don't worry about adding comments. I'm pretty decent
+at reading code so I mostly put all the comments for other
+people. I almost never comment my own code.
+
+9.) Feel free to ask if you have any questions or need a pointer.
 I'm always happy to help out.
 */
 
