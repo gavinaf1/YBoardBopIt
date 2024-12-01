@@ -55,7 +55,7 @@ static int display_height = 63;
 static int display_width = 127;
 
 //change this to the number of games currently added
-int num_games = 3;
+int num_games = 4;
 
 //this is the score of the person playing the game.
 int score = 0;
@@ -461,6 +461,85 @@ bool time_it(){
   }
 
 }
+
+
+//amy's stuff - still messing around with it
+#include <cstdlib>
+#include <ctime>
+bool guess_the_button() {
+  srand(static_cast<unsigned int>(time(nullptr)));
+
+  while (Yboard.get_button(1) || Yboard.get_button(2)) {
+    delay(10);
+  }
+
+  display.clearDisplay();
+  display.setCursor(0, 10);
+  display.setTextSize(3);
+  display.print("Guess");
+  display.setCursor(0, 40);
+  display.print("the Button!");
+  display.display();
+
+  Yboard.set_all_leds_color(0, 0, 0);
+  int score = 0;
+  int timeLimit = static_cast<int>(get_time(1.5));
+
+  while (true) {
+    display.clearDisplay();
+    display.setCursor(0, 10);
+    display.setTextSize(2);
+    display.print("Score: ");
+    display.print(score);
+    display.display();
+
+  bool correctButton = rand() % 2;
+
+  int timeRemaining = timeLimit;
+
+  bool guessed_correctly = false;
+    
+  while (timeRemaining > 0) {
+    delay(20);
+    timeRemaining -= 20;
+
+    if (Yboard.get_button(1)) {
+      while (Yboard.get_button(1)) delay (10);
+      if (!correctButton) {
+        guessed_correctly = true;
+      }
+      break;
+    }
+    
+    if (Yboard.get_button(2)) {
+      while (Yboard.get_button(2)) delay(10);
+      if (correctButton) {
+        guessed_correctly = true;
+      }
+      break;
+    }
+  }
+
+  if (!guessed_correctly) {
+    display.clearDisplay();
+    display.setCursor(0, 20);
+    display.setTextSize(2);
+    display.print("Game Over!");
+    display.setCursor(0, 50);
+    display.print("Score: ");
+    display.print(score);
+    display.display();
+    delay(2000);
+    return false;
+  }
+    
+  score++;
+  timeLimit = std::max(500, static_cast<int>(timeLimit * 0.9));
+    
+  }
+
+}
+
 
 //this is the main game loop that handles everything outside a micro game.
 void loop() {
