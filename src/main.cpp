@@ -465,7 +465,10 @@ bool time_it(){
 
 //amy's stuff - still messing around with it
 #include <cstdlib>
-#include <ctime>
+#include <algorithm>
+
+extern int score;
+
 bool guess_the_button() {
   srand(static_cast<unsigned int>(time(nullptr)));
 
@@ -483,6 +486,7 @@ bool guess_the_button() {
 
   Yboard.set_all_leds_color(0, 0, 0);
   int score = 0;
+  
   int timeLimit = static_cast<int>(get_time(1.5));
 
   while (true) {
@@ -566,6 +570,10 @@ void loop() {
 
     case 2:
       game_won = time_it();
+      break;
+
+    case 3:
+      game_won = guess_the_button();
       break;
 
     //this is run if none of the other cases match
