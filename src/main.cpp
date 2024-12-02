@@ -55,7 +55,7 @@ static int display_height = 63;
 static int display_width = 127;
 
 //change this to the number of games currently added
-int num_games = 4;
+int num_games = 5;
 
 //this is the score of the person playing the game.
 int score = 0;
@@ -162,7 +162,11 @@ void game_over(){
 
   }
 
-  delay(6000);
+  while(!Yboard.get_button(1) && !Yboard.get_button(2)){
+
+    delay(15);
+
+  }
 
   Yboard.set_all_leds_color(0, 0, 0);
 
@@ -463,6 +467,69 @@ bool time_it(){
 }
 
 
+bool line_it_up(){
+
+  float time = get_time(8);
+
+  int target = random()%100;
+  int pos = 0;
+  
+  int dur = 0;
+
+  while(true){
+
+    pos = Yboard.get_knob();
+
+    display.clearDisplay();
+
+    display.drawCircle(64, 32, 16, ON);
+
+    display.drawCircle(64 + 16*cos(PI*static_cast<double>(target + 15)/65), 
+                       32 + 16*sin(PI*static_cast<double>(target + 15)/65),
+                       8, ON);
+
+    display.fillCircle(64 + 16*cos(PI*static_cast<double>(pos + 15)/65), 
+                       32 + 16*sin(PI*static_cast<double>(pos + 15)/65),
+                       4, ON);
+
+    if(pos < target + 5 && pos > target - 5){
+
+      dur++;
+      if(dur >= 30){
+
+        return true;
+
+      }
+
+    }else{
+
+      dur = 0;
+
+    }
+
+    display.setCursor(0,15);
+    display.print("Line it up!");
+    draw_time(time);
+    display.display();
+
+    delay(20);  //delays the loop for 20ms
+    time -= 30; //removes 30ms from time. The extra 10 is to account for computation time, though that is only an estimate.
+
+    //here is where you put the game loop
+
+
+
+    if(time <= 0){
+
+      return false; //return false if they lose the game or return true if they win.
+
+    }
+
+  }
+
+}
+
+
 //amy's stuff - still messing around with it
 #include <cstdlib>
 #include <algorithm>
@@ -478,24 +545,18 @@ bool guess_the_button() {
 
   display.clearDisplay();
   display.setCursor(0, 10);
-  display.setTextSize(3);
-  display.print("Guess");
+  display.setTextSize(2);
+  display.print("Guess the");
   display.setCursor(0, 40);
-  display.print("the Button!");
+  display.print("Button!");
   display.display();
 
   Yboard.set_all_leds_color(0, 0, 0);
   int score = 0;
   
-  int timeLimit = static_cast<int>(get_time(1.5));
+  int timeLimit = get_time(3);
 
   while (true) {
-    display.clearDisplay();
-    display.setCursor(0, 10);
-    display.setTextSize(2);
-    display.print("Score: ");
-    display.print(score);
-    display.display();
 
   bool correctButton = rand() % 2;
 
@@ -524,16 +585,9 @@ bool guess_the_button() {
     }
   }
 
-  if (!guessed_correctly) {
-    display.clearDisplay();
-    display.setCursor(0, 20);
-    display.setTextSize(2);
-    display.print("Game Over!");
-    display.setCursor(0, 50);
-    display.print("Score: ");
-    display.print(score);
-    display.display();
-    delay(2000);
+  if (guessed_correctly) {
+    return true;
+  }else{
     return false;
   }
     
@@ -574,6 +628,10 @@ void loop() {
 
     case 3:
       game_won = guess_the_button();
+      break;
+
+    case 4:
+      game_won = line_it_up();
       break;
 
     //this is run if none of the other cases match
